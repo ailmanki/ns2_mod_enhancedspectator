@@ -1,0 +1,4 @@
+modEntry = {
+    FileHooks = "lua/MeteruEnhancedSpectator/Filehooks.lua",
+    Priority = 83 --make sure this is higher than any UWE extension
+}
