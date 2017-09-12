@@ -20,8 +20,8 @@ function Player:RemoveSpectators(newPlayer)
                     -- @ailmanki
                     -- A dead player becomes a Spectator of another player, as long as he is a playing team - all is fine
                     -- ]]
-                    local allowedToFollowNewPlayer = newPlayer and not newPlayer:isa("Spectator") and not newPlayer:isa("Commander") and newPlayer:GetIsOnPlayingTeam()
-                    --local allowedToFollowNewPlayer = newPlayer and not newPlayer:isa("Commander") and newPlayer:GetIsOnPlayingTeam()
+                    --local allowedToFollowNewPlayer = newPlayer and not newPlayer:isa("Spectator") and not newPlayer:isa("Commander") and newPlayer:GetIsOnPlayingTeam()
+                    local allowedToFollowNewPlayer = newPlayer and not newPlayer:isa("Commander") and newPlayer:GetIsOnPlayingTeam()
                     if not allowedToFollowNewPlayer then
 --                        message = message .. "{-)"
                         local success = spectatorEntity:CycleSpectatingPlayer(self, true)
