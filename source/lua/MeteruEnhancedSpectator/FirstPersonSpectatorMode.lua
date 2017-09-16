@@ -45,6 +45,8 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
         if spectatingEntity ~= finalTargetEnt then
 
             client:SetSpectatingPlayer(finalTargetEnt)
+            --[[@ailmanki
+            Select the id, so server knows who we are specing]]
             spectatorEntity.selectedId = finalTargetEnt:GetId()
             return true
 
