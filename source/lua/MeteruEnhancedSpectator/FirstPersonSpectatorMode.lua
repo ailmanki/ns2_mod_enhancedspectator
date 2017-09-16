@@ -45,6 +45,7 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
         if spectatingEntity ~= finalTargetEnt then
 
             client:SetSpectatingPlayer(finalTargetEnt)
+            spectatorEntity.selectedId = finalTargetEnt:GetId()
             return true
 
         end
