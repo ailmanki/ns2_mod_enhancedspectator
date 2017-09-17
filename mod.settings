@@ -1,7 +1,10 @@
 name        = "Enhanced Spectator"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[Keep following same player]=]
+description = [=[Keep following same player
+
+- fixed not following after cycling through
+- reverted being able to spec dead players for other dead players]=]
 image       = "preview.jpg"
 tag_modtype = "Gameplay Tweak"
 tag_support = "Must be run on Server"
