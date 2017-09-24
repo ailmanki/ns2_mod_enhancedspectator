@@ -8,6 +8,11 @@
 --
 -- ========= For more information, visit us at http://www.unknownworlds.com =====================
 
+--[[
+@ailmanki
+Was simpler to replace the whole file,
+its only a small change, so we keep spectating a "dead" player
+]]
 class 'GUIInsight_Overhead' (GUIScript)
 
 local mouseoverBackground
@@ -154,7 +159,14 @@ function GUIInsight_Overhead:Update(deltaTime)
                 end
                 -- If the player is dead, or the entity is not a player, deselect
             else
-                entityId = Entity.invalidId
+                --[[
+                @ailmanki
+                if its a player, dont deselect it
+                ]]
+                if entity and entity:isa("Player") then
+                else
+                    entityId = Entity.invalidId
+                end
             end
 
             if lastPlayerId ~= entityId then
