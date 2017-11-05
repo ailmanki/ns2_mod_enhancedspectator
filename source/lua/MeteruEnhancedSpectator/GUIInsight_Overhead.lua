@@ -65,6 +65,9 @@ function GUIInsight_Overhead:Initialize()
     end
     --GetGUIManager():CreateGUIScriptSingle("GUIMarqueeSelection")
 
+    -- [@ailmanki] copypasta from function function Commander:OnInitLocalClient()
+    self.ghostGuides = { }
+    self.reuseGhostGuides = { }
 end
 
 function GUIInsight_Overhead:Uninitialize()
@@ -84,6 +87,8 @@ function GUIInsight_Overhead:Uninitialize()
     end
     --GetGUIManager():DestroyGUIScriptSingle("GUIMarqueeSelection")
 
+    -- [@ailmanki] copypasta from function Commander:OnDestroy()
+    self:DestroyGhostGuides()
 end
 
 local function GetEntityUnderCursor(player)
@@ -115,6 +120,9 @@ function GUIInsight_Overhead:Update(deltaTime)
     if player == nil then
         return
     end
+
+    -- [@ailmanki] copypasta from function Commander:UpdateGhostGuides(
+    self:DestroyGhostGuides(true)
 
     local entityId = player.followId
     -- Only initialize healthbars after the camera has finished animating
@@ -203,6 +211,8 @@ function GUIInsight_Overhead:Update(deltaTime)
             end
         end
 
+
+
         local xScalar, yScalar = Client.GetCursorPos()
         local x = xScalar * Client.GetScreenWidth()
         local y = yScalar * Client.GetScreenHeight()
@@ -211,6 +221,31 @@ function GUIInsight_Overhead:Update(deltaTime)
 
         mouseoverText:SetText(text)
         mouseoverTextBack:SetText(text)
+
+        -- [@ailmanki] copypasta from function Commander:UpdateGhostGuides()
+        -- visual range for selected units if they are specified.
+        -- Draw visual range on structures that specify it (no building effects)
+        -- if GetVisualRadius() returns an array of radiuses, draw them all
+        local visualRadius = entity:GetVisualRadius()
+        if visualRadius ~= nil then
+            local teamtype = entity:GetTeamType()
+            local entityorigin = Vector(entity:GetOrigin())
+            local isShift = (entity:GetTechId() == kTechId.Shift)
+
+            if type(visualRadius) == "table" then
+                for i,r in ipairs(visualRadius) do
+                    self:AddGhostGuide(entityorigin, r, teamtype)
+                    if isShift then
+                        self:AddGhostGuide(entityorigin, kEnergizeRange, teamtype)
+                    end
+                end
+            else
+                self:AddGhostGuide(entityorigin, visualRadius, teamtype)
+                if isShift then
+                    self:AddGhostGuide(entityorigin, kEnergizeRange, teamtype)
+                end
+            end
+        end
 
     else
 
@@ -223,4 +258,65 @@ end
 function GUIInsight_Overhead:OnResolutionChanged(oldX, oldY, newX, newY)
     self:Uninitialize()
     self:Initialize()
+end
+
+-- [@ailmanki] copypasta from Commander.lua
+GUIInsight_Overhead.kMarineCircleDecalName = PrecacheAsset("models/misc/circle/circle.material")
+GUIInsight_Overhead.kAlienCircleDecalName = PrecacheAsset("models/misc/circle/circle_alien.material")
+
+-- [@ailmanki] copypasta from function Commander:AddGhostGuide(origin, radius)
+function GUIInsight_Overhead:AddGhostGuide(origin, radius, teamtype)
+
+    local guide
+
+    if #self.reuseGhostGuides > 0 then
+        guide = self.reuseGhostGuides[#self.reuseGhostGuides]
+        table.remove(self.reuseGhostGuides, #self.reuseGhostGuides)
+    end
+
+    -- Insert point, circle
+
+    if not guide then
+        guide = Client.CreateRenderDecal()
+        guide.material = Client.CreateRenderMaterial()
+    end
+
+    local materialName = ConditionalValue(teamtype == kAlienTeamType, GUIInsight_Overhead.kAlienCircleDecalName, GUIInsight_Overhead.kMarineCircleDecalName)
+    guide.material:SetMaterial(materialName)
+    guide:SetMaterial(guide.material)
+    local coords = Coords.GetTranslation(origin)
+    guide:SetCoords( coords )
+    guide:SetExtents(Vector(1,1,1)*radius)
+
+    table.insert(self.ghostGuides, {origin, guide})
+
+end
+
+-- [@ailmanki] copypasta from function Commander:DestroyGhostGuides(reuse)
+function GUIInsight_Overhead:DestroyGhostGuides(reuse)
+
+    for index, guide in ipairs(self.ghostGuides) do
+        if not reuse then
+            Client.DestroyRenderDecal(guide[2])
+
+        else
+            guide[2]:SetExtents(Vector(0,0,0))
+            table.insert(self.reuseGhostGuides, guide[2])
+        end
+    end
+
+    if not reuse then
+
+        for index, guide in ipairs(self.reuseGhostGuides) do
+            Client.DestroyRenderMaterial(guide.material)
+            Client.DestroyRenderDecal(guide)
+            guide = nil
+        end
+
+        self.reuseGhostGuides = {}
+
+    end
+
+    self.ghostGuides = {}
+
 end
