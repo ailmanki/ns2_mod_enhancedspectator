@@ -226,7 +226,7 @@ function GUIInsight_Overhead:Update(deltaTime)
         -- visual range for selected units if they are specified.
         -- Draw visual range on structures that specify it (no building effects)
         -- if GetVisualRadius() returns an array of radiuses, draw them all
-        local visualRadius = entity:GetVisualRadius()
+        local visualRadius = entity.GetVisualRadius and entity:GetVisualRadius()
         if visualRadius ~= nil then
             local teamtype = entity:GetTeamType()
             local entityorigin = Vector(entity:GetOrigin())

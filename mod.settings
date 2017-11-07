@@ -8,7 +8,7 @@ description = [=[Keep following same player
 - fixed not following in overhead mdoe
 - fixed not following when switching mode
 - add ghostguides for buildings on mouseover
-]=]
+- fixed some entities causing errors for the new ghostguides; probably it was clogs causing it]=]
 image       = "preview.jpg"
 tag_modtype = "Gameplay Tweak"
 tag_support = "Must be run on Server"
