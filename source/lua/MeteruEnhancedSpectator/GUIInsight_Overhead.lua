@@ -99,12 +99,12 @@ local function GetEntityUnderCursor(player)
     local pickVec = CreatePickRay(player, x, y)
 
     local origin = player:GetOrigin()
-    local trace = Shared.TraceRay(origin, origin + pickVec*1000, CollisionRep.Select, PhysicsMask.CommanderSelect, EntityFilterOne(self))
+    local trace = Shared.TraceRay(origin, origin + pickVec*1000, CollisionRep.Select, PhysicsMask.CommanderSelect, EntityFilterOne(player))
     local recastCount = 0
     while trace.entity == nil and trace.fraction < 1 and trace.normal:DotProduct(Vector(0, 1, 0)) < 0 and recastCount < 3 do
         -- We've hit static geometry with the normal pointing down (ceiling). Re-cast from the point of impact.
         local recastFrom = 1000 * trace.fraction + 0.1
-        trace = Shared.TraceRay(origin + pickVec*recastFrom, origin + pickVec*1000, CollisionRep.Select, PhysicsMask.CommanderSelect, EntityFilterOne(self))
+        trace = Shared.TraceRay(origin + pickVec*recastFrom, origin + pickVec*1000, CollisionRep.Select, PhysicsMask.CommanderSelect, EntityFilterOne(player))
         recastCount = recastCount + 1
     end
 

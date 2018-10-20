@@ -46,15 +46,7 @@ local function NextSpectatorMode(self, mode)
         mode = self.specMode
     end
 
-    local numModes = 0
-    for name, _ in pairs(kSpectatorMode) do
-
-        if type(name) ~= "number" then
-            numModes = numModes + 1
-        end
-
-    end
-
+    local numModes = #kSpectatorMode
     local nextMode = (mode % numModes) + 1
     -- Following is only used directly through SetSpectatorMode(), never in this function.
     if not self:IsValidMode(nextMode) or nextMode == kSpectatorMode.Following or nextMode == kSpectatorMode.KillCam then
