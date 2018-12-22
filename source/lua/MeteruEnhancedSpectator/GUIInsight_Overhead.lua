@@ -15,44 +15,37 @@ its only a small change, so we keep spectating a "dead" player
 ]]
 class 'GUIInsight_Overhead' (GUIScript)
 
-local mouseoverBackground
-local mouseoverText
-local mouseoverTextBack
-
-local kFontName = Fonts.kAgencyFB_Medium
-local kFontScale
-
 local showHints, playerFollowAttempts, playerFollowNextAttempt, lastPlayerId
 
 local kPlayerFollowMaxAttempts = 20
 local kPlayerFollowCheckInterval = 0.05
 
 function GUIInsight_Overhead:Initialize()
-    kFontScale = GUIScale(Vector(1, 0.8, 0))
+    local kFontScale = GUIScale(Vector(1, 0.8, 0))
 
-    mouseoverBackground = GUIManager:CreateGraphicItem()
-    mouseoverBackground:SetAnchor(GUIItem.Left, GUIItem.Top)
-    mouseoverBackground:SetLayer(kGUILayerPlayerHUD)
-    mouseoverBackground:SetColor(Color(1, 1, 1, 0))
-    mouseoverBackground:SetIsVisible(false)
+    self.mouseoverBackground = GUIManager:CreateGraphicItem()
+    self.mouseoverBackground:SetAnchor(GUIItem.Left, GUIItem.Top)
+    self.mouseoverBackground:SetLayer(kGUILayerPlayerHUD)
+    self.mouseoverBackground:SetColor(Color(1, 1, 1, 0))
+    self.mouseoverBackground:SetIsVisible(false)
 
-    mouseoverText = GUIManager:CreateTextItem()
-    mouseoverText:SetFontName(kFontName)
-    mouseoverText:SetScale(kFontScale)
-    mouseoverText:SetColor(Color(1, 1, 1, 1))
-    mouseoverText:SetFontIsBold(true)
-    GUIMakeFontScale(mouseoverText)
+    self.mouseoverText = GUIManager:CreateTextItem()
+    self.mouseoverText:SetFontName(Fonts.kAgencyFB_Medium)
+    self.mouseoverText:SetScale(kFontScale)
+    self.mouseoverText:SetColor(Color(1, 1, 1, 1))
+    self.mouseoverText:SetFontIsBold(true)
+    GUIMakeFontScale(self.mouseoverText)
 
-    mouseoverTextBack = GUIManager:CreateTextItem()
-    mouseoverTextBack:SetFontName(kFontName)
-    mouseoverTextBack:SetScale(kFontScale)
-    mouseoverTextBack:SetColor(Color(0, 0, 0, 0.8))
-    mouseoverTextBack:SetFontIsBold(true)
-    mouseoverTextBack:SetPosition(GUIScale(Vector(3,3,0)))
-    GUIMakeFontScale(mouseoverTextBack)
+    self.mouseoverTextBack = GUIManager:CreateTextItem()
+    self.mouseoverTextBack:SetFontName(kFontName)
+    self.mouseoverTextBack:SetScale(kFontScale)
+    self.mouseoverTextBack:SetColor(Color(0, 0, 0, 0.8))
+    self.mouseoverTextBack:SetFontIsBold(true)
+    self.mouseoverTextBack:SetPosition(GUIScale(Vector(3,3,0)))
+    GUIMakeFontScale(self.mouseoverTextBack)
 
-    mouseoverBackground:AddChild(mouseoverTextBack)
-    mouseoverBackground:AddChild(mouseoverText)
+    self.mouseoverBackground:AddChild(self.mouseoverTextBack)
+    self.mouseoverBackground:AddChild(self.mouseoverText)
 
     showHints = Client.GetOptionBoolean("showHints", true) == true
 
@@ -63,16 +56,47 @@ function GUIInsight_Overhead:Initialize()
     if showHints then
         GetGUIManager():CreateGUIScriptSingle("GUIInsight_Logout")
     end
-    --GetGUIManager():CreateGUIScriptSingle("GUIMarqueeSelection")
 
-    -- [@ailmanki] copypasta from function function Commander:OnInitLocalClient()
-    self.ghostGuides = { }
+    self.keyHints = GUIManager:CreateTextItem()
+    self.keyHints:SetFontName(Fonts.kAgencyFB_Tiny)
+    self.keyHints:SetScale(GetScaledVector())
+    self.keyHints:SetAnchor(GUIItem.Left, GUIItem.Bottom)
+
+    local numLines = 1
+    local keyHintsText = table.concat(
+            {
+                string.format("[%s] Free camera mode", BindingsUI_GetInputValue("Weapon1")),
+                string.format("[%s] Overview mode", BindingsUI_GetInputValue("Weapon2")),
+                string.format("[%s] First person mode", BindingsUI_GetInputValue("Weapon3")),
+                string.format("[%s] Switch mode", BindingsUI_GetInputValue("Jump")),
+                string.format("[%s] Stats", BindingsUI_GetInputValue("RequestHealth")),
+                string.format("[%s] Toggle health", BindingsUI_GetInputValue("Use")),
+                string.format("[%s] Toggle outlines", BindingsUI_GetInputValue("ToggleFlashlight")),
+                string.format("[%s/%s] Zoom", BindingsUI_GetInputValue("OverHeadZoomIncrease"),
+                        BindingsUI_GetInputValue("OverHeadZoomDecrease")),
+                string.format("[%s] Reset zoom", BindingsUI_GetInputValue("OverHeadZoomReset")),
+                string.format("[%s] Draw on screen", BindingsUI_GetInputValue("SecondaryAttack")),
+                string.format("[%s] Clear screen", BindingsUI_GetInputValue("Reload")),
+                string.format("[%s] Toggle this help", BindingsUI_GetInputValue("RequestAmmo")),
+                string.format("[%s] Toggle HUD", BindingsUI_GetInputValue("Weapon4"))
+            }, " ")
+
+    keyHintsText, _, numLines = WordWrap(self.keyHints, keyHintsText, 0, Client.GetScreenWidth() - GUIScale(260))
+
+    self.keyHints:SetPosition(Vector(GUIScale(10), -GUIScale(20 * numLines), 0))
+    self.keyHints:SetColor(kWhite)
+    GUIMakeFontScale(self.keyHints)
+
+    self.keyHints:SetText(keyHintsText)
+
     self.reuseGhostGuides = { }
+    self.ghostGuides = {}
+
 end
 
 function GUIInsight_Overhead:Uninitialize()
 
-    GUI.DestroyItem(mouseoverBackground)
+    GUI.DestroyItem(self.mouseoverBackground)
 
     if self.playerHealthbars then
         GetGUIManager():DestroyGUIScriptSingle("GUIInsight_PlayerHealthbars")
@@ -85,10 +109,13 @@ function GUIInsight_Overhead:Uninitialize()
     if showHints then
         GetGUIManager():DestroyGUIScriptSingle("GUIInsight_Logout")
     end
-    --GetGUIManager():DestroyGUIScriptSingle("GUIMarqueeSelection")
 
-    -- [@ailmanki] copypasta from function Commander:OnDestroy()
-    self:DestroyGhostGuides()
+    if self.keyHints then
+        GUI.DestroyItem(self.keyHints)
+        self.keyHints = nil
+    end
+
+    self:DestroyGhostGuides(false)
 end
 
 local function GetEntityUnderCursor(player)
@@ -108,11 +135,83 @@ local function GetEntityUnderCursor(player)
         recastCount = recastCount + 1
     end
 
-    return trace.entity
+    return trace.entity, trace.endPoint
 
 end
 
-function GUIInsight_Overhead:Update(deltaTime)
+function GUIInsight_Overhead:AddGhostGuide(target)
+
+    local origin = target:GetOrigin()
+    local radii = {}
+
+    local visualRadius = target.GetVisualRadius and target:GetVisualRadius()
+
+    if visualRadius then
+        if type(visualRadius) == "table" then
+            for i = 1, #visualRadius do
+                local r = visualRadius[i]
+                radii[#radii+1] = r
+            end
+        else
+            radii[1] = visualRadius
+        end
+    end
+
+    for i = 1, #radii do
+        local radius = radii[i]
+        local guide
+        if #self.reuseGhostGuides > 0 then
+            guide = table.remove(self.reuseGhostGuides)
+        end
+
+        -- Insert point, circle
+        if not guide then
+            guide = Client.CreateRenderDecal()
+            guide.material = Client.CreateRenderMaterial()
+        end
+
+        local materialName = ConditionalValue(target:GetTeamType() == kAlienTeamType, Commander.kAlienCircleDecalName, Commander.kMarineCircleDecalName)
+        guide.material:SetMaterial(materialName)
+        guide:SetMaterial(guide.material)
+        local coords = Coords.GetTranslation(origin)
+        guide:SetCoords( coords )
+        guide:SetExtents(Vector(1,1,1)*radius)
+
+        self.ghostGuides[#self.ghostGuides+1] = guide
+    end
+
+end
+
+function GUIInsight_Overhead:DestroyGhostGuides(reuse)
+
+    for i = 1, #self.ghostGuides do
+        local guide = self.ghostGuides[i]
+        if not reuse then
+            Client.DestroyRenderDecal(guide)
+        else
+            guide:SetExtents(Vector(0,0,0))
+            table.insert(self.reuseGhostGuides, guide)
+        end
+    end
+
+    if not reuse then
+
+        for i = 1, #self.reuseGhostGuides do
+            local guide = self.reuseGhostGuides[i]
+            Client.DestroyRenderMaterial(guide.material)
+            Client.DestroyRenderDecal(guide)
+            guide = nil
+        end
+
+        self.reuseGhostGuides = {}
+
+end
+
+    self.ghostGuides = {}
+
+end
+
+function GUIInsight_Overhead:Update()
 
     PROFILE("GUIInsight_Overhead:Update")
 
@@ -120,9 +219,6 @@ function GUIInsight_Overhead:Update(deltaTime)
     if player == nil then
         return
     end
-
-    -- [@ailmanki] copypasta from function Commander:UpdateGhostGuides(
-    self:DestroyGhostGuides(true)
 
     local entityId = player.followId
     -- Only initialize healthbars after the camera has finished animating
@@ -189,10 +285,19 @@ function GUIInsight_Overhead:Update(deltaTime)
     end
 
     -- Store entity under cursor
-    local entity = GetEntityUnderCursor(player)
-    player.entityIdUnderCursor = entity and entity:GetId() or Entity.invalidId
+    local entity, targetCoord = GetEntityUnderCursor(player)
+    local oldId = player.entityIdUnderCursor
+    local newId = entity and entity:GetId() or Entity.invalidId
+    player.entityIdUnderCursor = newId
+    player.groundCoordUnderCursor = targetCoord
 
-    if entity ~= nil and HasMixin(entity, "Live") and entity:GetIsAlive() then
+    if entity then
+
+        if newId ~= oldId then
+            self:AddGhostGuide(entity)
+        end
+
+        if HasMixin(entity, "Live") and entity:GetIsAlive() then
 
         local text = ToString(math.ceil(entity:GetHealthScalar() * 100)) .. "%"
 
@@ -216,107 +321,74 @@ function GUIInsight_Overhead:Update(deltaTime)
         local xScalar, yScalar = Client.GetCursorPos()
         local x = xScalar * Client.GetScreenWidth()
         local y = yScalar * Client.GetScreenHeight()
-        mouseoverBackground:SetPosition(Vector(x + GUIScale(18), y + GUIScale(18), 0))
-        mouseoverBackground:SetIsVisible(true)
+            self.mouseoverBackground:SetPosition(Vector(x + GUIScale(18), y + GUIScale(18), 0))
+            self.mouseoverBackground:SetIsVisible(true)
 
-        mouseoverText:SetText(text)
-        mouseoverTextBack:SetText(text)
-
-        -- [@ailmanki] copypasta from function Commander:UpdateGhostGuides()
-        -- visual range for selected units if they are specified.
-        -- Draw visual range on structures that specify it (no building effects)
-        -- if GetVisualRadius() returns an array of radiuses, draw them all
-        local visualRadius = entity.GetVisualRadius and entity:GetVisualRadius()
-        if visualRadius ~= nil then
-            local teamtype = entity:GetTeamType()
-            local entityorigin = Vector(entity:GetOrigin())
-            local isShift = (entity:GetTechId() == kTechId.Shift)
-
-            if type(visualRadius) == "table" then
-                for i,r in ipairs(visualRadius) do
-                    self:AddGhostGuide(entityorigin, r, teamtype)
-                    if isShift then
-                        self:AddGhostGuide(entityorigin, kEnergizeRange, teamtype)
-                    end
-                end
-            else
-                self:AddGhostGuide(entityorigin, visualRadius, teamtype)
-                if isShift then
-                    self:AddGhostGuide(entityorigin, kEnergizeRange, teamtype)
-                end
-            end
-        end
-
-    else
-
-        mouseoverBackground:SetIsVisible(false)
-
-    end
-
-end
-
-function GUIInsight_Overhead:OnResolutionChanged(oldX, oldY, newX, newY)
-    self:Uninitialize()
-    self:Initialize()
-end
-
--- [@ailmanki] copypasta from Commander.lua
-GUIInsight_Overhead.kMarineCircleDecalName = PrecacheAsset("models/misc/circle/circle.material")
-GUIInsight_Overhead.kAlienCircleDecalName = PrecacheAsset("models/misc/circle/circle_alien.material")
-
--- [@ailmanki] copypasta from function Commander:AddGhostGuide(origin, radius)
-function GUIInsight_Overhead:AddGhostGuide(origin, radius, teamtype)
-
-    local guide
-
-    if #self.reuseGhostGuides > 0 then
-        guide = self.reuseGhostGuides[#self.reuseGhostGuides]
-        table.remove(self.reuseGhostGuides, #self.reuseGhostGuides)
-    end
-
-    -- Insert point, circle
-
-    if not guide then
-        guide = Client.CreateRenderDecal()
-        guide.material = Client.CreateRenderMaterial()
-    end
-
-    local materialName = ConditionalValue(teamtype == kAlienTeamType, GUIInsight_Overhead.kAlienCircleDecalName, GUIInsight_Overhead.kMarineCircleDecalName)
-    guide.material:SetMaterial(materialName)
-    guide:SetMaterial(guide.material)
-    local coords = Coords.GetTranslation(origin)
-    guide:SetCoords( coords )
-    guide:SetExtents(Vector(1,1,1)*radius)
-
-    table.insert(self.ghostGuides, {origin, guide})
-
-end
-
--- [@ailmanki] copypasta from function Commander:DestroyGhostGuides(reuse)
-function GUIInsight_Overhead:DestroyGhostGuides(reuse)
-
-    for index, guide in ipairs(self.ghostGuides) do
-        if not reuse then
-            Client.DestroyRenderDecal(guide[2])
+            self.mouseoverText:SetText(text)
+            self.mouseoverTextBack:SetText(text)
 
         else
-            guide[2]:SetExtents(Vector(0,0,0))
-            table.insert(self.reuseGhostGuides, guide[2])
-        end
-    end
+            self.mouseoverBackground:SetIsVisible(false)
+                    end
 
-    if not reuse then
 
-        for index, guide in ipairs(self.reuseGhostGuides) do
-            Client.DestroyRenderMaterial(guide.material)
-            Client.DestroyRenderDecal(guide)
-            guide = nil
-        end
+            else
 
-        self.reuseGhostGuides = {}
+        self:DestroyGhostGuides(true)
+        self.mouseoverBackground:SetIsVisible(false)
 
     end
 
-    self.ghostGuides = {}
+                end
 
+function GUIInsight_Overhead:SendKeyEvent(key, down)
+    if not down then return end
+
+    if GetIsBinding(key, "RequestAmmo") then
+        self.keyHints:SetIsVisible(not self.keyHints:GetIsVisible())
+        return true
+    end
+
+    local player = Client.GetLocalPlayer()
+    if not player then
+        return
+            end
+
+    if key == InputKey.MouseButton0 then
+        local target = player:GetCrossHairTarget()
+        if not target and player.groundCoordUnderCursor then
+            local kRange = 2
+            local targets = GetEntitiesWithinXYRange("Player", player.groundCoordUnderCursor, kRange)
+            target = targets[1]
+        end
+
+        if target and target:isa("Player") then
+
+            local followId = target:GetId()
+
+            -- When clicking the same player, deselect so it stops following
+            if player.followId == followId then
+                followId = Entity.invalidId
+            end
+
+            player.followId = followId
+            Client.SendNetworkMessage("SpectatePlayer", {entityId = followId}, true)
+
+            return true -- consume the key event
+
+    else
+            -- Clicking outside of the frames while not having the graphs up should deselect too
+            local guiGraphs = GetGUIManager():GetGUIScriptSingle("GUIInsight_Graphs")
+            if not guiGraphs or not guiGraphs:GetIsVisible() then
+                player.followId = Entity.invalidId
+                Client.SendNetworkMessage("SpectatePlayer", {entityId = player.followId}, true)
+    end
+
+end
+    end
+end
+
+function GUIInsight_Overhead:OnResolutionChanged()
+    self:Uninitialize()
+    self:Initialize()
 end
