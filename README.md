@@ -8,6 +8,8 @@ Keep following same player
 - fixed not following in overhead mdoe
 - fixed not following when switching mode
 - add ghostguides for buildings on mouseover
+- removed ghostguids, is now vanilla v326
+- simplifed code, some is now vanilla v326
 
 ### Steam Workshop: 
 http://steamcommunity.com/sharedfiles/filedetails/?id=1132771326
