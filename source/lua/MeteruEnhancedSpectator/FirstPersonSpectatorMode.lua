@@ -1,3 +1,53 @@
+function FirstPersonSpectatorMode:FindTarget(spectator)
+    local validTarget
+    if spectator.selectedId ~= Entity.invalidId then
+
+        validTarget = Shared.GetEntity(spectator.selectedId)
+        -- Do not allow spectating Commanders currently in first person.
+        -- More work is needed before that is ready.
+        if validTarget and validTarget:isa("Commander") then
+            validTarget = nil
+        end
+
+    end
+
+    local targets = spectator:GetTargetsToFollow()
+    if not validTarget then
+
+        -- Find a valid target to follow.
+        for t = 1, #targets do
+
+            if targets[t]:isa("Player") then
+
+                validTarget = targets[t]
+                break
+
+            end
+
+        end
+
+    end
+
+    if validTarget then
+        Server.GetOwner(spectator):SetSpectatingPlayer(validTarget)
+        --[[@ailmanki
+        Select the id]]
+        spectator.selectedId = validTarget:GetId()
+    elseif spectator:GetIsOnPlayingTeam() then
+        spectator:SetSpectatorMode(kSpectatorMode.Following)
+    else
+
+        -- If there is at least an invalid target, use it as the origin for the spectator
+        -- so the spectator free cam isn't placed in the RR for example.
+        if #targets > 0 then
+            spectator:SetOrigin(targets[1]:GetOrigin() + Vector(0, 1, 0))
+        end
+        spectator:SetSpectatorMode(kSpectatorMode.FreeLook)
+
+    end
+
+end
+
 function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, spectatorEntity, client, forward)
 
     -- Find a valid target to follow.
@@ -46,7 +96,7 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
 
             client:SetSpectatingPlayer(finalTargetEnt)
             --[[@ailmanki
-            Select the id, so server knows who we are specing]]
+            Select the id]]
             spectatorEntity.selectedId = finalTargetEnt:GetId()
             return true
 

@@ -19,7 +19,9 @@ description = [=[Keep following same player
 
 - removed ghostguids, is now vanilla v326
 
-- simplifed code, some is now vanilla v326]=]
+- simplifed code, some is now vanilla v326
+
+- experimental bugfix for 325-spectator-rubber-banding-back-to-original-view-target]=]
 image       = "preview.jpg"
 tag_modtype = "Gameplay Tweak"
 tag_support = "Must be run on Server"
