@@ -11,6 +11,7 @@ Keep following same player
 - removed ghostguids, is now vanilla v326
 - simplifed code, some is now vanilla v326
 - experimental bugfix for 325-spectator-rubber-banding-back-to-original-view-target
+- first person spectator relevancy based on target
 
 ### Steam Workshop: 
 http://steamcommunity.com/sharedfiles/filedetails/?id=1132771326

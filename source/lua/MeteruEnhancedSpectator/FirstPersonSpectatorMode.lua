@@ -29,7 +29,11 @@ function FirstPersonSpectatorMode:FindTarget(spectator)
     end
 
     if validTarget then
-        Server.GetOwner(spectator):SetSpectatingPlayer(validTarget)
+        --[[@ailmanki
+        Adjust relevancy depending on the spectated client]]
+        local client = Server.GetOwner(spectator)
+        self:SetRelevancyMaskFirstPersonSpectator(validTarget, client)
+        client:SetSpectatingPlayer(validTarget)
         --[[@ailmanki
         Select the id]]
         spectator.selectedId = validTarget:GetId()
@@ -46,6 +50,23 @@ function FirstPersonSpectatorMode:FindTarget(spectator)
 
     end
 
+end
+
+
+--[[@ailmanki
+Adjust relevancy depending on the spectated client]]
+function FirstPersonSpectatorMode:SetRelevancyMaskFirstPersonSpectator(target, client)
+    local mask
+    local teamNumber = target:GetTeamNumber()
+    if teamNumber == 1 then
+        mask = kRelevantToTeam1Unit
+    elseif teamNumber == 2 then
+        mask = kRelevantToTeam2Unit
+    else
+        -- should never happen
+        mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+    end
+    client:SetRelevancyMask(mask)
 end
 
 function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, spectatorEntity, client, forward)
@@ -83,7 +104,6 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
         return true
 
     elseif validTargetIndex then
-
         -- Find the next index and cycle around if needed.
         if forward then
             validTargetIndex = validTargetIndex < #targets and validTargetIndex + 1 or 1
@@ -93,8 +113,11 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
 
         local finalTargetEnt = targets[validTargetIndex]
         if spectatingEntity ~= finalTargetEnt then
-
             client:SetSpectatingPlayer(finalTargetEnt)
+            --[[@ailmanki
+            Adjust relevancy depending on the spectated client]]
+            self:SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client)
+
             --[[@ailmanki
             Select the id]]
             spectatorEntity.selectedId = finalTargetEnt:GetId()
