@@ -23,21 +23,34 @@ function Player:UpdateClientRelevancyMask()
 
         -- Spectators should see all map blips.
     elseif self:GetTeamNumber() == kSpectatorIndex then
+
         if self:GetIsOverhead() then
+
             mask = bit.bor(kRelevantToTeam1Commander, kRelevantToTeam2Commander)
-        --[[@ailmanki
-        Adjust relevancy depending on the spectated client]]
+
         elseif self:GetIsFirstPerson() then
-            local followTarget = self:GetKillCamVictim()
-            if followTarget and followTarget:isa("Player") then
-                if followTarget:GetTeamNumber() == 1 then
-                    mask = kRelevantToTeam1Unit
-                elseif followTarget:GetTeamNumber() == 2 then
-                    mask = kRelevantToTeam2Unit
+
+            --[[ @ailmanki
+            Adjust relevancy depending on the spectated client]]
+            if self.selectedId ~= Entity.invalidId then
+                local followTarget = Shared.GetEntity(self.selectedId)
+                if followTarget and followTarget:isa("Player") then
+
+                    if followTarget:GetTeamNumber() == 1 then
+                        mask = kRelevantToTeam1Unit
+                    elseif followTarget:GetTeamNumber() == 2 then
+                        mask = kRelevantToTeam2Unit
+                    else
+                        mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+                    end
+
+                else
+                    mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
                 end
             else
                 mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
             end
+
         end
 
         -- ReadyRoomPlayers should not see any blips.
@@ -83,6 +96,9 @@ function Player:RemoveSpectators(newPlayer)
 
                 else
                     spectatorClient:SetSpectatingPlayer(newPlayer)
+                    --[[@ailmanki
+                    Select the id]]
+                    spectatorEntity.selectedId = newPlayer:GetId()
                 end
 
             end

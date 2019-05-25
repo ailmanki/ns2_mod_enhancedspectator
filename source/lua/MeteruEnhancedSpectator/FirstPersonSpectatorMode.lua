@@ -32,11 +32,12 @@ function FirstPersonSpectatorMode:FindTarget(spectator)
         --[[@ailmanki
         Adjust relevancy depending on the spectated client]]
         local client = Server.GetOwner(spectator)
-        self:SetRelevancyMaskFirstPersonSpectator(validTarget, client)
         client:SetSpectatingPlayer(validTarget)
         --[[@ailmanki
         Select the id]]
         spectator.selectedId = validTarget:GetId()
+
+        SetRelevancyMaskFirstPersonSpectator(validTarget, client)
     elseif spectator:GetIsOnPlayingTeam() then
         spectator:SetSpectatorMode(kSpectatorMode.Following)
     else
@@ -55,7 +56,7 @@ end
 
 --[[@ailmanki
 Adjust relevancy depending on the spectated client]]
-function FirstPersonSpectatorMode:SetRelevancyMaskFirstPersonSpectator(target, client)
+function SetRelevancyMaskFirstPersonSpectator(target, client)
     local mask
     local teamNumber = target:GetTeamNumber()
     if teamNumber == 1 then
@@ -114,13 +115,14 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
         local finalTargetEnt = targets[validTargetIndex]
         if spectatingEntity ~= finalTargetEnt then
             client:SetSpectatingPlayer(finalTargetEnt)
-            --[[@ailmanki
-            Adjust relevancy depending on the spectated client]]
-            self:SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client)
 
             --[[@ailmanki
             Select the id]]
             spectatorEntity.selectedId = finalTargetEnt:GetId()
+
+            --[[@ailmanki
+            Adjust relevancy depending on the spectated client]]
+            SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client)
             return true
 
         end
