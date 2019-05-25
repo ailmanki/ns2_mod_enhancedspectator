@@ -5,7 +5,7 @@ Keep following same player
 
 - fixed not following after cycling through
 - reverted being able to spec dead players for other dead players
-- fixed not following in overhead mdoe
+- fixed not following in overhead mode
 - fixed not following when switching mode
 - add ghostguides for buildings on mouseover
 - removed ghostguids, is now vanilla v326
