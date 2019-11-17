@@ -276,54 +276,57 @@ end
 
 local function InitializeTeam(teamIndex)
 
-    local startTime = PlayerUI_GetGameStartTime()
     local teamInfo = GetEntitiesForTeam("TeamInfo", teamIndex)
-    local currentRTs = teamInfo[1]:GetNumResourceTowers()
-    local currentTotalTeamRes = teamInfo[1]:GetTotalTeamResources()
-    local currentKills = teamInfo[1]:GetKills()
-    teams[teamIndex] = {
-    RTs = currentRTs, RTPoints = {Vector(startTime, currentRTs, 0)}, 
-    TotalTeamRes = currentTotalTeamRes, TeamResPoints = {Vector(startTime, currentTotalTeamRes, 0)}, 
-    Kills = currentKills, KillPoints = {Vector(startTime, currentKills, 0)}}
-    
+    if (nil ~= teamInfo[1]) then
+        local startTime = PlayerUI_GetGameStartTime()
+        local currentRTs = teamInfo[1]:GetNumResourceTowers()
+        local currentTotalTeamRes = teamInfo[1]:GetTotalTeamResources()
+        local currentKills = teamInfo[1]:GetKills()
+        teams[teamIndex] = {
+        RTs = currentRTs, RTPoints = {Vector(startTime, currentRTs, 0)},
+        TotalTeamRes = currentTotalTeamRes, TeamResPoints = {Vector(startTime, currentTotalTeamRes, 0)},
+        Kills = currentKills, KillPoints = {Vector(startTime, currentKills, 0)}}
+    end
 end
 
 local function UpdateTeamGraphs(time, teamIndex)
 
     local teamInfo = GetEntitiesForTeam("TeamInfo", teamIndex)
-    local team = teams[teamIndex]
-    
-    local currentRTs = teamInfo[1]:GetNumResourceTowers()
-    local previousRTs = team.RTs
-    if currentRTs ~= previousRTs then
-    
-        maxRTs = math.max(maxRTs, currentRTs)
-        table.insert(team.RTPoints, Vector(time, previousRTs, 0))
-        table.insert(team.RTPoints, Vector(time, currentRTs, 0))
-        team.RTs = currentRTs
-    
+    if (nil ~= teamInfo[1] and nil ~= teams[teamIndex]) then
+        local team = teams[teamIndex]
+
+        local currentRTs = teamInfo[1]:GetNumResourceTowers()
+        local previousRTs = team.RTs
+        if currentRTs ~= previousRTs then
+
+            maxRTs = math.max(maxRTs, currentRTs)
+            table.insert(team.RTPoints, Vector(time, previousRTs, 0))
+            table.insert(team.RTPoints, Vector(time, currentRTs, 0))
+            team.RTs = currentRTs
+
+        end
+
+        local currentTotalTeamRes = teamInfo[1]:GetTotalTeamResources()
+        local previousTotalTeamRes = team.TotalTeamRes
+        if currentTotalTeamRes ~= previousTotalTeamRes then
+
+            maxRes = math.max(maxRes, currentTotalTeamRes)
+            table.insert(team.TeamResPoints, Vector(time, currentTotalTeamRes, 0))
+            team.TotalTeamRes = currentTotalTeamRes
+
+        end
+
+        local currentKills = teamInfo[1]:GetKills()
+        local previousKills = team.Kills
+        if currentKills ~= previousKills then
+
+            maxKills = math.max(maxKills, currentKills)
+            table.insert(team.KillPoints, Vector(time, currentKills, 0))
+            team.Kills = currentKills
+
+        end
+
     end
-    
-    local currentTotalTeamRes = teamInfo[1]:GetTotalTeamResources()
-    local previousTotalTeamRes = team.TotalTeamRes
-    if currentTotalTeamRes ~= previousTotalTeamRes then
-    
-        maxRes = math.max(maxRes, currentTotalTeamRes)
-        table.insert(team.TeamResPoints, Vector(time, currentTotalTeamRes, 0))
-        team.TotalTeamRes = currentTotalTeamRes
-    
-    end
-    
-    local currentKills = teamInfo[1]:GetKills()
-    local previousKills = team.Kills
-    if currentKills ~= previousKills then
-    
-        maxKills = math.max(maxKills, currentKills)
-        table.insert(team.KillPoints, Vector(time, currentKills, 0))
-        team.Kills = currentKills
-    
-    end
-    
 end
 
 local prevGameStartTime = -1
