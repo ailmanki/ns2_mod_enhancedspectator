@@ -12,6 +12,7 @@ Keep following same player
 - simplifed code, some is now vanilla v326
 - experimental bugfix for 325-spectator-rubber-banding-back-to-original-view-target
 - first person spectator relevancy based on target
+- fixed bugs related to UI
 
 ### Steam Workshop: 
 http://steamcommunity.com/sharedfiles/filedetails/?id=1132771326
