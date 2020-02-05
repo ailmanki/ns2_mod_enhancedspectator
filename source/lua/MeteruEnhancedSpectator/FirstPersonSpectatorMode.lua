@@ -17,7 +17,7 @@ function FirstPersonSpectatorMode:FindTarget(spectator)
         -- Find a valid target to follow.
         for t = 1, #targets do
 
-            if targets[t]:isa("Player") then
+            if targets[t]:isa("Player") and HasMixin(targets[t], "Team") then
 
                 validTarget = targets[t]
                 break
