@@ -251,7 +251,7 @@ function GUIInsight_Overhead:Update()
                 entity = Shared.GetEntity(entityId)
             end
 
-            if entity and entity:isa("Player") and entity:GetIsAlive() then
+            if entity and entity:isa("Player") and HasMixin(entity, "Team") then
                 local origin = entity:GetOrigin()
                 player:SetWorldScrollPosition(origin.x, origin.z)
                 playerFollowAttempts = 0
@@ -263,14 +263,7 @@ function GUIInsight_Overhead:Update()
                 end
                 -- If the player is dead, or the entity is not a player, deselect
             else
-                --[[
-                @ailmanki
-                if its a player, dont deselect it
-                ]]
-                if entity and entity:isa("Player") then
-                else
-                    entityId = Entity.invalidId
-                end
+                entityId = Entity.invalidId
             end
 
             if lastPlayerId ~= entityId then
