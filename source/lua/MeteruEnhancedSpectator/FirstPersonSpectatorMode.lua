@@ -78,7 +78,7 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
     for t = #targets, 1, -1 do
 
         local target = targets[t]
-        if not target:isa("Player") then
+        if not ( target:isa("Player") and HasMixin(target, "Team") ) then
             table.remove(targets, t)
         end
 
