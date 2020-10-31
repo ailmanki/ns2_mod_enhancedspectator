@@ -11,3 +11,24 @@ function Spectator:GetIsValidTarget(entity)
     return isValid
 
 end
+
+local networkVars =
+{
+    relevancy = "boolean"
+}
+
+local oldOnInitialized = Spectator.OnInitialized
+function Spectator:OnInitialized()
+    oldOnInitialized(self)
+    self.relevancy = false
+end
+
+function Spectator:ToggleRelevancy(spectatingPlayer)
+    if self.modeInstance and self.modeInstance.CycleSpectatingPlayer then
+        local spectatorClient = Server.GetOwner(self)
+        return self.modeInstance:ToggleRelevancy(spectatingPlayer, self, spectatorClient, forward)
+    end
+    return false
+end
+
+Shared.LinkClassToMap("Spectator", Spectator.kMapName, networkVars)

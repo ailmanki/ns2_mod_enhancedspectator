@@ -1,22 +1,1 @@
-name        = "Enhanced Spectator"
-source_dir  = "source"
-output_dir  = "output"
-description = [=[[h1]Keep following same player and only see what that player would see on map.[/h1]
-
-[list]
-[*]fixed not following after cycling through
-[*]reverted being able to spec dead players for other dead players
-[*]fixed not following in overhead mode
-[*]fixed not following when switching mode
-[*][strike]add ghostguides for buildings on mouseover[/strike] 
-[*][strike]fixed some entities causing errors for the new ghostguides; probably it was clogs causing it[/strike]
-[*]removed ghostguids, is now vanilla v326
-[*]simplifed code, some is now vanilla v326
-[*]experimental bugfix for 325-spectator-rubber-banding-back-to-original-view-target
-[*]first person spectator relevancy based on target
-[*]fixed bugs related to UI
-[/list]]=]
-image       = "preview.jpg"
-tag_modtype = "Gameplay Tweak"
-tag_support = "Must be run on Server"
-publish_id = "4384b7fe"
+name        = "Enhanced Spectator"source_dir  = "source"output_dir  = "output"description = [=[[h1]Keep following same player and only see what that player would see on map.[/h1][list][*]fixed not following after cycling through[*]reverted being able to spec dead players for other dead players[*]fixed not following in overhead mode[*]fixed not following when switching mode[*][strike]add ghostguides for buildings on mouseover[/strike][*][strike]fixed some entities causing errors for the new ghostguides; probably it was clogs causing it[/strike][*]removed ghostguids, is now vanilla v326[*]simplifed code, some is now vanilla v326[*]experimental bugfix for 325-spectator-rubber-banding-back-to-original-view-target[*]first person spectator relevancy based on target[*]fixed bugs related to UI[/list]]=]image       = "preview.jpg"tag_modtype = "Gameplay Tweak"tag_support = "Must be run on Server"publish_id = "4384b7fe"

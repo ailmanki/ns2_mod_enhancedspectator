@@ -32,7 +32,7 @@ function Player:UpdateClientRelevancyMask()
 
             --[[ @ailmanki
             Adjust relevancy depending on the spectated client]]
-            if self.selectedId ~= Entity.invalidId then
+            if self.relevancy and self.selectedId ~= Entity.invalidId then
                 local followTarget = Shared.GetEntity(self.selectedId)
                 if followTarget and followTarget:isa("Player") then
 
@@ -59,6 +59,7 @@ function Player:UpdateClientRelevancyMask()
     end
 
     local client = self.client
+
     -- client may be nil if the server is shutting down.
     if client then
         client:SetRelevancyMask(mask)

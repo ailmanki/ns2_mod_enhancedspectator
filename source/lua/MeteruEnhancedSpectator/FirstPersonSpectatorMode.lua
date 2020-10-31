@@ -37,7 +37,7 @@ function FirstPersonSpectatorMode:FindTarget(spectator)
         Select the id]]
         spectator.selectedId = validTarget:GetId()
 
-        SetRelevancyMaskFirstPersonSpectator(validTarget, client)
+        SetRelevancyMaskFirstPersonSpectator(validTarget, client, spectator)
     elseif spectator:GetIsOnPlayingTeam() then
         spectator:SetSpectatorMode(kSpectatorMode.Following)
     else
@@ -56,18 +56,33 @@ end
 
 --[[@ailmanki
 Adjust relevancy depending on the spectated client]]
-function SetRelevancyMaskFirstPersonSpectator(target, client)
+function SetRelevancyMaskFirstPersonSpectator(target, client, spectator)
     local mask
-    local teamNumber = target:GetTeamNumber()
-    if teamNumber == 1 then
-        mask = kRelevantToTeam1Unit
-    elseif teamNumber == 2 then
-        mask = kRelevantToTeam2Unit
+    if spectator:GetIsOnPlayingTeam() or spectator.relevancy then
+        local teamNumber = target:GetTeamNumber()
+        if teamNumber == 1 then
+            mask = kRelevantToTeam1Unit
+        elseif teamNumber == 2 then
+            mask = kRelevantToTeam2Unit
+        else
+            -- should never happen
+            mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+        end
     else
-        -- should never happen
         mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
     end
     client:SetRelevancyMask(mask)
+end
+
+function FirstPersonSpectatorMode:ToggleRelevancy(spectatingEntity, spectatorEntity, client, forward)
+    spectatorEntity.relevancy = not spectatorEntity.relevancy
+    if spectatorEntity.selectedId ~= Entity.invalidId then
+        local validTarget = Shared.GetEntity(spectatorEntity.selectedId)
+        if validTarget  then
+            local client = Server.GetOwner(spectatorEntity)
+            SetRelevancyMaskFirstPersonSpectator(validTarget, client, spectatorEntity)
+        end
+    end
 end
 
 function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, spectatorEntity, client, forward)
@@ -122,7 +137,7 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
 
             --[[@ailmanki
             Adjust relevancy depending on the spectated client]]
-            SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client)
+            SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client, spectatorEntity)
             return true
 
         end
