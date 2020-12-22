@@ -12,6 +12,8 @@ Script.Load("lua/GUIList.lua")
 
 class 'GUIProduction' (GUIScript)
 
+GUIProduction.kShowProgressTooltip = GetAdvancedOption("researchtimetooltip")
+
 local kBackgroundPos
 local kIconSize
 local kIconSpacing
@@ -201,11 +203,14 @@ function GUIProduction:Initialize()
     self.Background = background
     self.InProgress = inProgress
     self.Complete = complete
+    self.tooltip = GetGUIManager():CreateGUIScript("menu/GUIHoverTooltip")
+    self.tooltip:SetToggle(true)
 end
 
 function GUIProduction:Uninitialize()
     GetGUIManager():DestroyGUIScript(self.InProgress)
     GetGUIManager():DestroyGUIScript(self.Complete)
+    GetGUIManager():DestroyGUIScript(self.tooltip)
     GUI.DestroyItem(self.Background)
 
     self.Background = nil
@@ -293,6 +298,19 @@ function GUIProduction:UpdateTech(onChange)
     end
 end
 
+local tooltipText
+local function displayNameTooltip(tech)
+
+    if GUIProduction.kShowProgressTooltip then
+
+        local mouseX, mouseY = Client.GetCursorPosScreen()
+        if GUIItemContainsPoint(tech.Icon, mouseX, mouseY) then
+            tooltipText = GetDisplayNameForTechId(tech.Id)
+        end
+    end
+
+end
+
 local function updateProgress(tech)
 
     if tech.StartTime then
@@ -304,6 +322,22 @@ local function updateProgress(tech)
             tech.ResearchBarBack:SetIsVisible(false)
         end
     end
+
+    if GUIProduction.kShowProgressTooltip then
+
+        local mouseX, mouseY = Client.GetCursorPosScreen()
+        if GUIItemContainsPoint(tech.Icon,  mouseX, mouseY) then
+
+            local text = GetDisplayNameForTechId(tech.Id)
+            local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
+            timeLeft = timeLeft < 0 and 0 or timeLeft
+
+            local minutes = math.floor(timeLeft/60)
+            local seconds = math.ceil(timeLeft - minutes*60)
+            tooltipText = string.format("%s - %01.0f:%02.0f", text, minutes, seconds)
+        end
+    end
+
 end
 
 function GUIProduction:Update(deltaTime)
@@ -314,5 +348,23 @@ function GUIProduction:Update(deltaTime)
         -- update progress bars for researching tech
         self.InProgress:ForEach(updateProgress)
 
+        if not tooltipText then
+            self.Complete:ForEach(displayNameTooltip)
+        end
+
+        if tooltipText then
+            self.tooltip:SetText(tooltipText)
+
+            if not self.tooltip:GetShown() then
+                self.tooltip:Show()
+            end
+
+            tooltipText = nil
+
+        else
+            if self.tooltip:GetShown() then
+                self.tooltip:Hide()
+            end
+        end
     end
 end
