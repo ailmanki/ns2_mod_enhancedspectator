@@ -38,14 +38,18 @@ function Player:UpdateClientRelevancyMask()
 
                     if followTarget:GetTeamNumber() == 1 then
                         mask = kRelevantToTeam1Unit
+                        self.relevancyOverhead = 1
                     elseif followTarget:GetTeamNumber() == 2 then
                         mask = kRelevantToTeam2Unit
+                        self.relevancyOverhead = 2
                     else
                         mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+                        self.relevancyOverhead = 0
                     end
 
                 else
                     mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+                    self.relevancyOverhead = 0
                 end
             else
                 mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)

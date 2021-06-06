@@ -62,14 +62,18 @@ function SetRelevancyMaskFirstPersonSpectator(target, client, spectator)
         local teamNumber = target:GetTeamNumber()
         if teamNumber == 1 then
             mask = kRelevantToTeam1Unit
+            spectator.relevancyOverhead = 1
         elseif teamNumber == 2 then
             mask = kRelevantToTeam2Unit
+            spectator.relevancyOverhead = 2
         else
             -- should never happen
             mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+            spectator.relevancyOverhead = 0
         end
     else
         mask = bit.bor(kRelevantToTeam1Unit, kRelevantToTeam2Unit, kRelevantToReadyRoom)
+        spectator.relevancyOverhead = 0
     end
     client:SetRelevancyMask(mask)
 end

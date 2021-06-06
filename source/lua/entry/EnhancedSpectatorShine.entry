@@ -1,0 +1,4 @@
+modEntry = {
+    Shared = "lua/MeteruEnhancedSpectator/Shared.lua",
+    Priority = 5 --lower then shine
+}
