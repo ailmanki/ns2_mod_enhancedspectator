@@ -356,7 +356,8 @@ function GUIInsight_Overhead:SendKeyEvent(key, down)
             target = targets[1]
         end
 
-        if target and target:isa("Player") then
+        if target and target:isa("Player") and
+                (gBotDebugWindow == nil or gBotDebugWindow:GetIsPlayerEntIdABot(target:GetId())) then
 
             local followId = target:GetId()
 
@@ -367,6 +368,10 @@ function GUIInsight_Overhead:SendKeyEvent(key, down)
 
             player.followId = followId
             Client.SendNetworkMessage("SpectatePlayer", {entityId = followId}, true)
+
+            if gBotDebugWindow ~= nil then
+                gBotDebugWindow:SelectWithPlayerEntityId(followId)
+            end
 
             return true -- consume the key event
 
