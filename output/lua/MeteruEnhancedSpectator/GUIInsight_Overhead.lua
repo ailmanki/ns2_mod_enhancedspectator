@@ -79,7 +79,7 @@ function GUIInsight_Overhead:Initialize()
                 string.format("[%s] Clear screen", BindingsUI_GetInputValue("Reload")),
                 string.format("[%s] Toggle this help", BindingsUI_GetInputValue("RequestAmmo")),
                 string.format("[%s] Toggle HUD", BindingsUI_GetInputValue("Weapon4")),
-                string.format("[%s] Toggle relevancy ", BindingsUI_GetInputValue("Weapon5"))
+                string.format("[%s] Toggle Team Perspective", BindingsUI_GetInputValue("Weapon5"))
             }, " ")
 
     keyHintsText, _, numLines = WordWrap(self.keyHints, keyHintsText, 0, Client.GetScreenWidth() - GUIScale(260))
@@ -252,7 +252,7 @@ function GUIInsight_Overhead:Update()
                 entity = Shared.GetEntity(entityId)
             end
 
-            if entity and entity:isa("Player") and HasMixin(entity, "Team") then
+            if entity and entity:isa("Player") and entity:GetIsAlive() then
                 local origin = entity:GetOrigin()
                 player:SetWorldScrollPosition(origin.x, origin.z)
                 playerFollowAttempts = 0

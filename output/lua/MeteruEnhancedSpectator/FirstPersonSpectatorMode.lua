@@ -1,5 +1,4 @@
 function FirstPersonSpectatorMode:FindTarget(spectator)
-
     local validTarget
     if spectator.selectedId ~= Entity.invalidId then
 
@@ -135,9 +134,10 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
         local finalTargetEnt = targets[validTargetIndex]
         if spectatingEntity ~= finalTargetEnt then
 
+            --[[@ailmanki
+            Select the id]]
             spectatorEntity.selectedId = finalTargetEnt:GetId()
             client:SetSpectatingPlayer(finalTargetEnt)
-
 
             --[[@ailmanki
             Adjust relevancy depending on the spectated client]]
