@@ -8,3 +8,6 @@ ModLoader.SetupFileHook( "lua/Insight.lua", "lua/MeteruEnhancedSpectator/Insight
 ModLoader.SetupFileHook( "lua/Player_Server.lua", "lua/MeteruEnhancedSpectator/Player_Server.lua", "post" )
 ModLoader.SetupFileHook( "lua/Spectator.lua", "lua/MeteruEnhancedSpectator/Spectator.lua", "post" )
 ModLoader.SetupFileHook( "lua/TeamSpectator.lua", "lua/MeteruEnhancedSpectator/TeamSpectator.lua", "post" )
+--ModLoader.SetupFileHook( "lua/GUITechMap.lua", "lua/MeteruEnhancedSpectator/GUITechMap.lua", "post" )
+ModLoader.SetupFileHook( "lua/SpectatingTeam.lua", "lua/MeteruEnhancedSpectator/SpectatingTeam.lua", "replace" )
+ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/MeteruEnhancedSpectator/TechTree_Server.lua", "post" )

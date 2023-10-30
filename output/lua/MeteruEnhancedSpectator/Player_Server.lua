@@ -113,3 +113,17 @@ function Player:RemoveSpectators(newPlayer)
     end
 
 end
+
+
+function Player:GetTechTree()
+
+    local techTree
+
+    local team = self:GetTeam()
+    if team ~= nil and team.GetTechTree then --and team:isa("PlayingTeam")
+        techTree = team:GetTechTree()
+    end
+
+    return techTree
+
+end
