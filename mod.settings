@@ -1,4 +1,4 @@
-name        = "Enhanced Spectator"
+name        = "Enhanced Spectator Beta"
 source_dir  = "source"
 output_dir  = "output"
 description = [=[[h1]Keep following same player and only see what that player would see on map.[/h1]
@@ -8,18 +8,19 @@ description = [=[[h1]Keep following same player and only see what that player wo
 [*]reverted being able to spec dead players for other dead players
 [*]fixed not following in overhead mode
 [*]fixed not following when switching mode
-[*][strike]add ghostguides for buildings on mouseover[/strike]
-[*][strike]fixed some entities causing errors for the new ghostguides; probably it was clogs causing it[/strike]
-[*]removed ghostguids, is now vanilla v326
-[*]simplifed code, some is now vanilla v326
+[*][strike]add ghost-guides for buildings on mouseover[/strike]
+[*][strike]fixed some entities causing errors for the new ghost-guides; probably it was clogs causing it[/strike]
+[*]removed ghost-guides, is now vanilla v326
+[*]simplified code, some is now vanilla v326
 [*]experimental bugfix for 325-spectator-rubber-banding-back-to-original-view-target
 [*]first person spectator relevancy based on target
 [*]fixed bugs related to UI
 [*]relevancy for overhead and freelook
 [*]relevancy now also affects voice chat, requires the activation of AllTalkSpectator from Shine
-[*]Renamed button "Toggle Relevancy" to "Toggle Team Perspective"
+[*]renamed button "Toggle Relevancy" to "Toggle Team Perspective"
+[*]fixed techtree not being synced as spectator
 [/list]]=]
 image       = "preview.jpg"
 tag_modtype = "Gameplay Tweak"
 tag_support = "Must be run on Server"
-publish_id = 1132771326
+publish_id = 3072291568

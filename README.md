@@ -1,4 +1,4 @@
-# Enhanced Spectator
+# Enhanced Spectator Beta
 *A mod for Natural Selection 2*
 
 Keep following same player and only see what that player would see on map.
@@ -16,10 +16,11 @@ Keep following same player and only see what that player would see on map.
 - fixed bugs related to UI
 - relevancy for overhead and free-look
 - relevancy now also affects voice chat, requires the activation of AllTalkSpectator from Shine
-- Renamed button "Toggle Relevancy" to "Toggle Team Perspective"
+- renamed button "Toggle Relevancy" to "Toggle team perspective"
+- add tech tree information to first person spectator
 
 ## Steam Workshop: 
-http://steamcommunity.com/sharedfiles/filedetails/?id=1132771326
+http://steamcommunity.com/sharedfiles/filedetails/?id=3072291568
 
 ## Natural Selection 2 official forums:
 https://forums.unknownworlds.com/discussion/152849/keep-specing-same-player-enhanced-spectator

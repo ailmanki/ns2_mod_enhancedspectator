@@ -79,7 +79,7 @@ function GUIInsight_Overhead:Initialize()
                 string.format("[%s] Clear screen", BindingsUI_GetInputValue("Reload")),
                 string.format("[%s] Toggle this help", BindingsUI_GetInputValue("RequestAmmo")),
                 string.format("[%s] Toggle HUD", BindingsUI_GetInputValue("Weapon4")),
-                string.format("[%s] Toggle Team Perspective", BindingsUI_GetInputValue("Weapon5"))
+                string.format("[%s] Toggle team perspective", BindingsUI_GetInputValue("Weapon5"))
             }, " ")
 
     keyHintsText, _, numLines = WordWrap(self.keyHints, keyHintsText, 0, Client.GetScreenWidth() - GUIScale(260))
