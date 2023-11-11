@@ -36,8 +36,11 @@ function FirstPersonSpectatorMode:FindTarget(spectator)
         --[[@ailmanki
         Select the id]]
         spectator.selectedId = validTarget:GetId()
-
-        SetRelevancyMaskFirstPersonSpectator(validTarget, client, spectator)
+        if not spectator:GetIsOnPlayingTeam() then
+            -- reset the techTree and update relevancy, this is a spectator not a dead player
+            spectator.sendTechTreeBase = true
+            SetRelevancyMaskFirstPersonSpectator(validTarget, client, spectator)
+        end
     elseif spectator:GetIsOnPlayingTeam() then
         spectator:SetSpectatorMode(kSpectatorMode.Following)
     else
@@ -95,28 +98,25 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
     local targets = spectatorEntity:GetTargetsToFollow()
     -- Remove any non-players from the list.
     for t = #targets, 1, -1 do
-
         local target = targets[t]
         if not ( target:isa("Player") and HasMixin(target, "Team") ) then
             table.remove(targets, t)
         end
-
     end
 
     local numTargets = #targets
-    local validTargetIndex = numTargets > 0 and math.random(1, numTargets) or nil
+    local validTargetIndex
     -- Look for the current spectatingEntity index.
-    for t = 1, #targets do
-
+    for t = 1, numTargets do
         if targets[t] == spectatingEntity then
-
             validTargetIndex = t
             break
-
         end
-
     end
 
+    if nil == validTargetIndex then
+        validTargetIndex = numTargets > 0 and math.random(1, numTargets) or nil
+    end
     -- Fall back on Following mode if there is no other target.
     if numTargets == 0 then
 
@@ -133,21 +133,34 @@ function FirstPersonSpectatorMode:CycleSpectatingPlayer(spectatingEntity, specta
 
         local finalTargetEnt = targets[validTargetIndex]
         if spectatingEntity ~= finalTargetEnt then
+            local isSpectator = not spectatorEntity:GetIsOnPlayingTeam()
+            if isSpectator then
+                -- only sendTechTreeBase when changing teams and its a spectator and not a dead player
+                local oldEnt = client:GetSpectatingPlayer()
+                local oldTeamNumber
+                if oldEnt then
+                    oldTeamNumber = oldEnt:GetTeamNumber()
+                end
 
+                local newTeamNumber = finalTargetEnt:GetTeamNumber()
+
+                spectatorEntity.sendTechTreeBase = newTeamNumber ~= oldTeamNumber
+            end
             --[[@ailmanki
             Select the id]]
             spectatorEntity.selectedId = finalTargetEnt:GetId()
+
             client:SetSpectatingPlayer(finalTargetEnt)
 
             --[[@ailmanki
             Adjust relevancy depending on the spectated client]]
-            SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client, spectatorEntity)
+            if isSpectator then
+                SetRelevancyMaskFirstPersonSpectator(finalTargetEnt, client, spectatorEntity)
+            end
             return true
 
         end
-
     end
 
     return false
-
 end

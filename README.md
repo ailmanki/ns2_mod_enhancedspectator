@@ -16,7 +16,8 @@ Keep following same player and only see what that player would see on map.
 - fixed bugs related to UI
 - relevancy for overhead and free-look
 - relevancy now also affects voice chat, requires the activation of AllTalkSpectator from Shine
-- Renamed button "Toggle Relevancy" to "Toggle Team Perspective"
+- renamed button "Toggle Relevancy" to "Toggle team perspective"
+- add tech tree information to first person spectator
 
 ## Steam Workshop: 
 http://steamcommunity.com/sharedfiles/filedetails/?id=1132771326

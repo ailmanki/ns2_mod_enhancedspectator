@@ -79,7 +79,8 @@ end
 function Player:RemoveSpectators(newPlayer)
 
     local spectators = Shared.GetEntitiesWithClassname("Spectator")
-    for e = 0, spectators:GetSize() - 1 do
+    local SpectatorCount = spectators:GetSize() - 1
+    for e = 0, SpectatorCount do
 
         local spectatorEntity = spectators:GetEntityAtIndex(e)
         if spectatorEntity and spectatorEntity ~= newPlayer then
