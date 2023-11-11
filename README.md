@@ -1,4 +1,4 @@
-# Enhanced Spectator Beta
+# Enhanced Spectator
 *A mod for Natural Selection 2*
 
 Keep following same player and only see what that player would see on map.
@@ -20,7 +20,7 @@ Keep following same player and only see what that player would see on map.
 - add tech tree information to first person spectator
 
 ## Steam Workshop: 
-http://steamcommunity.com/sharedfiles/filedetails/?id=3072291568
+http://steamcommunity.com/sharedfiles/filedetails/?id=1132771326
 
 ## Natural Selection 2 official forums:
 https://forums.unknownworlds.com/discussion/152849/keep-specing-same-player-enhanced-spectator

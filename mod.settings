@@ -1,4 +1,4 @@
-name        = "Enhanced Spectator Beta"
+name        = "Enhanced Spectator"
 source_dir  = "source"
 output_dir  = "output"
 description = [=[[h1]Keep following same player and only see what that player would see on map.[/h1]
@@ -23,4 +23,4 @@ description = [=[[h1]Keep following same player and only see what that player wo
 image       = "preview.jpg"
 tag_modtype = "Gameplay Tweak"
 tag_support = "Must be run on Server"
-publish_id = 3072291568
+publish_id = 1132771326
