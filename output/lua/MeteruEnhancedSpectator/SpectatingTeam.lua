@@ -191,9 +191,9 @@ function SpectatingTeam:UpdateTechTree(teamNumber)
                 local followId = player:GetFollowingPlayerId()
 
                 -- cache the spectated players teamNumber
-                if (followTargets[followId] == nil) then
+                if followTargets[followId] == nil then
                     local followTarget = Shared.GetEntity(followId)
-                    if followTarget then
+                    if followTarget and followTarget.GetTeamNumber then
                         followTargets[followId] = followTarget:GetTeamNumber()
                     else
                         followTargets[followId] = false
